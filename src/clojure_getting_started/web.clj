@@ -94,9 +94,12 @@
   (POST "/challenge" req
         (assoc (splash) :body (get-in (req :body) [:challenge])))
   (GET "/startraffle" req
-       (assoc 
-        (json-response) 
-        :body (start-raffle (get-in (json/read-str (:body (members-request)):key-fn keyword) [:channel :members]))))
+       (let [members (get-in (json/read-str
+                              (:body (members-request))
+                              :key-fn keyword) [:channel :members])
+             raffle (start-raffle members)
+             _ (persist-raffle! "jou" raffle)]
+         (assoc (json-response) :body raffle)))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

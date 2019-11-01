@@ -78,7 +78,9 @@
 
 (defn winner-request [userid]
   (-> (client/post (str winner-endpoint userid))
-      :body))
+      :body
+      :body
+      :user))
 
 (def history-endpoint
     (str "https://slack.com/api/channels.history?token=" token "&channel=CPP1NF1MY"))

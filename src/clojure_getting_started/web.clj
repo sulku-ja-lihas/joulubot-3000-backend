@@ -73,7 +73,7 @@
 
 (def channel-name "CPP1NF1MY")
 (defn token [] (env :otoken))
-(def members-endpoint (str "https://slack.com/api/channels.info?token=" "xoxp-15568607280-297377650019-806518784451-6cc7a4c931084c01fed8a12b4b059df8" "&channel=CPP1NF1MY&pretty=1"))
+(def members-endpoint (str "https://slack.com/api/channels.info?token=" token "&channel=CPP1NF1MY&pretty=1"))
 
 (defn members-request []
   (client/post members-endpoint))

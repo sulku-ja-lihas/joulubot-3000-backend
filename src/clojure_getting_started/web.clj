@@ -14,22 +14,22 @@
             [clojure.data.json :as json]))
 (use '[ring.middleware.json :only [wrap-json-body]])
 
-; (defn send-to-slack [text]
-;   (client/post (env :write-hook)
-;                {:form-params {:payload (json/write-str {:text text})}}))
+(def hook-url (env :hook))
+
+(def token (env :otoken))
 
 (defn entry-to-seq [{:keys [name tickets]}]
-  (repeat tickets name))
+(repeat tickets name))
 
 (defn pick-winner [raffle]
-  (->> raffle
-       (map entry-to-seq)
-       flatten
-       shuffle
-       rand-nth))
+(->> raffle
+      (map entry-to-seq)
+      flatten
+      shuffle
+      rand-nth))
 
 (defn send-to-slack [text]
-  (client/post "https://hooks.slack.com/services/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"
+  (client/post hook-url
                {:form-params {:payload (json/write-str {:text text})}}))
 
 (defn start-raffle [list-of-users]
@@ -50,7 +50,6 @@
 (def connection-url
   (env :mombodb))
 
-(def token (env :otoken))
 
 (defn persist-raffle! [thread-id raffle]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]

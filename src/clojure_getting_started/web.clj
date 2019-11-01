@@ -74,6 +74,19 @@
 (defn members-request []
   (client/post members-endpoint))
 
+(def history-endpoint
+    (str "https://slack.com/api/channels.history?token=" (env :token) "&channel=CPP1NF1MY"))
+
+(def bot-threadid-request []
+  (let [messages ((json/read-str (:body (client/post history-endpoint))) "messages")]
+    ((some #(= (% "bot_id") "BQ1QR81PS")) "ts")))
+
+(def replies-endpoint
+  (str "https://slack.com/api/channels.replies?token=" (env :token) "&channel=CPP1NF1MY"))
+
+(def thread-messages-request [threadid]
+  (client/post (str replies-end-point "&thread_ts=" threadid)))
+
 (defroutes main-routes
   (GET "/" []
        (send-to-slack "HELLOBOYS")

@@ -68,8 +68,8 @@
    :headers {"Content-Type" "application/json"}})
 
 (def channel-name "CPP1NF1MY")
-(def token "xoxp-15568607280-297377650019-805201176466-19db6459b044e62fab6a51c68ce99133")
-(def members-endpoint "https://slack.com/api/channels.info?token=xoxp-15568607280-297377650019-805201176466-19db6459b044e62fab6a51c68ce99133&channel=CPP1NF1MY&pretty=1")
+(defn token [] (env :otoken))
+(def members-endpoint (str "https://slack.com/api/channels.info?token=" "xoxp-15568607280-297377650019-806518784451-6cc7a4c931084c01fed8a12b4b059df8" "&channel=CPP1NF1MY&pretty=1"))
 
 (defn members-request []
   (client/post members-endpoint))
@@ -100,7 +100,7 @@
   (GET "/db" []
        (make-response (read-random-stuff)))
   (GET "/startraffle" req
-    (assoc (json-response) :body (:body (members-request))))
+    (assoc (json-response) :body (get-in (json/read-str (:body (members-request)):key-fn keyword) [:channel :members])))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

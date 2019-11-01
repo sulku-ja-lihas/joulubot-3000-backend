@@ -110,7 +110,8 @@
                         :raffle
                         pick-winner
                         winner-request
-                        make-response)]))
+                        make-response)]
+         (assoc (splash) :body winner)))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

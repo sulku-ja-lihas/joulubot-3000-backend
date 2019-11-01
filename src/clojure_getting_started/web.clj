@@ -100,6 +100,10 @@
              raffle (start-raffle members)
              _ (persist-raffle! "jou" raffle)]
          (assoc (json-response) :body raffle)))
+  (GET "/finishraffle" []
+       (let [winner (-> (select-raffle "jou")
+                        :raffle
+                        pick-winner)]))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

@@ -1,9 +1,7 @@
 
-# clojure-getting-started
+# JouluBot 3000 Backend
 
-A barebones Clojure app, which can easily be deployed to Heroku.  
-
-This application support the [Getting Started with Clojure](https://devcenter.heroku.com/articles/getting-started-with-clojure) article - check it out.
+A christmas backend, which is automatically deployed to Heroku.  
 
 ## Running Locally
 
@@ -21,19 +19,9 @@ Your app should now be running on [localhost:5000](http://localhost:5000/).
 
 ## Deploying to Heroku
 
-```sh
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
-
-or
-
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+Automagic when you push to master. **A CHRISTMAS MIRACLE**
 
 ## Documentation
 
-For more information about using Clojure on Heroku, see these Dev Center articles:
-
-- [Clojure on Heroku](https://devcenter.heroku.com/categories/clojure)
+The christmas elves are hard at work producing the documentation at the moment. Please be patient, it is still November!
 

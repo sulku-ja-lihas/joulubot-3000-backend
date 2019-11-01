@@ -29,7 +29,7 @@
        rand-nth))
 
 (defn send-to-slack [text]
-  (client/post (or (env :write-hook) "https://hooks.slack.com/services/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")
+  (client/post "https://hooks.slack.com/services/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"
                {:form-params {:payload (json/write-str {:text text})}}))
 
 (defn start-raffle [list-of-users]
@@ -75,14 +75,14 @@
   (client/post members-endpoint))
 
 (def history-endpoint
-    (str "https://slack.com/api/channels.history?token=" (env :token) "&channel=CPP1NF1MY"))
+    (str "https://slack.com/api/channels.history?token=" token "&channel=CPP1NF1MY"))
 
 (defn bot-threadid-request []
   (let [messages ((json/read-str (:body (client/post history-endpoint))) "messages")]
     ((some #(= (% "bot_id") "BQ1QR81PS")) "ts")))
 
 (def replies-endpoint
-  (str "https://slack.com/api/channels.replies?token=" (env :token) "&channel=CPP1NF1MY"))
+  (str "https://slack.com/api/channels.replies?token=" token "&channel=CPP1NF1MY"))
 
 (defn thread-messages-request [threadid]
   (client/post (str replies-endpoint "&thread_ts=" threadid)))

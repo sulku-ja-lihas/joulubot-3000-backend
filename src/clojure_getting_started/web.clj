@@ -14,11 +14,9 @@
             [clojure.data.json :as json]))
 (use '[ring.middleware.json :only [wrap-json-body]])
 
-(defn startRaffle []
-  (let [list-of-users ["Atte" "Jonne" "Toni" "Otto" "Tuomo"]
-        users-with-tickets (map (fn [user] (-> (assoc {} :name user)
-                                               (assoc :tickets (+ (rand-int 40) 80)))) list-of-users)]
-    users-with-tickets))
+(defn startRaffle [list-of-users]
+  (map (fn [user] (-> (assoc {} :name user)
+                      (assoc :tickets (+ (rand-int 40) 80)))) list-of-users))
 
 (defn send-to-slack [text]
   (client/post (env :write-hook)
@@ -41,6 +39,10 @@
 (defn persist-raffle! [thread-id raffle]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
     (mc/insert-and-return db "raffles" {:_id thread-id})))
+
+(defn select-raffle [thread-id]
+  (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
+    (mc/find-map-by-id db "raffles" thread-id)))
 
 (defn write-to-db [msg]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]

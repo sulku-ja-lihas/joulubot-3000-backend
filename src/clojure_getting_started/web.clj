@@ -39,12 +39,6 @@
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
     (mc/find-maps db "test" {})))
 
-(defn parse-body [req]
-  (->> req
-       :body
-       slurp
-       json/read-str))
-
 (def tila (atom {}))
 
 (defroutes main-routes
@@ -54,23 +48,22 @@
   (GET "/ping" []
        (assoc (splash) :body "Ping ping vaan itelles"))
   (POST "/challenge" req
-    (assoc (splash) :body (get-in (req :body) [:challenge])))
-  (POST "/save" [req]
-        (let [resp (parse-body req)]
-          (do
-            (swap! tila assoc :req req :resp resp)
-            (write-to-db resp))))
+        (assoc (splash) :body (get-in (req :body) [:challenge])))
+  (POST "/save" req
+        (comment "joo tässä voi sitten tallentaa tietokantaan vaikka (write-to-db data) kunhan sen payloadin saa jotenkin kaivettua tosta perkeleen reqista. Ei kiinnosta ja fuck the world"))
   (GET "/db" []
        (make-response (read-random-stuff)))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 
 (def app
-  (-> main-routes wrap-json-response (wrap-json-body {:keywords? true })))
+  (-> main-routes
+      (wrap-json-body {:keywords? true})
+      wrap-json-response))
 
 (defn -main [& [port]]
-  (let [port (Integer. (or port (env :port) 5000))]
-    (jetty/run-jetty (site #'app) {:port port :join? false})))
+(let [port (Integer. (or port (env :port) 5000))]
+  (jetty/run-jetty (site #'app) {:port port :join? false})))
 
 ;; For interactive development:
 ;; (.stop server)

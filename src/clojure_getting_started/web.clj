@@ -24,6 +24,7 @@
   (client/post (env :write-hook)
     {:form-params {:payload (json/write-str {:text text})}}))
 
+
 (defn splash []
   {:status 200
    :headers {"Content-Type" "text/plain"}
@@ -46,6 +47,16 @@
     (mc/find-maps db "test" {})))
 
 (def tila (atom {}))
+(defn json-response []
+  {:status 200
+   :headers {"Content-Type" "application/json"}})
+
+(def channel-name "CPP1NF1MY")
+(def token "xoxp-15568607280-297377650019-819812719255-6e9170c5031b4956a03c731024000c8f")
+(def members-endpoint "https://slack.com/api/channels.info?token=xoxp-15568607280-297377650019-819812719255-6e9170c5031b4956a03c731024000c8f&channel=CPP1NF1MY&pretty=1")
+
+(defn members-request []
+  (client/post members-endpoint))
 
 (defroutes main-routes
   (GET "/" []
@@ -59,6 +70,9 @@
         (comment "joo tässä voi sitten tallentaa tietokantaan vaikka (write-to-db data) kunhan sen payloadin saa jotenkin kaivettua tosta perkeleen reqista. Ei kiinnosta ja fuck the world"))
   (GET "/db" []
        (make-response (read-random-stuff)))
+    (assoc (splash) :body (get-in (req :body) [:challenge])))
+  (GET "/startraffle" req
+    (assoc (json-response) :body (:body (members-request))))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

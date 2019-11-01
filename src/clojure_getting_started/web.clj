@@ -14,11 +14,6 @@
             [clojure.data.json :as json]))
 (use '[ring.middleware.json :only [wrap-json-body]])
 
-(defn startRaffle [list-of-users]
-  (map (fn [user] (-> (assoc {} :name user)
-                      (assoc :tickets (+ (rand-int 40) 80)))) list-of-users))
-
-
 (defn send-to-slack [text]
   (client/post (env :write-hook)
                {:form-params {:payload (json/write-str {:text text})}}))
@@ -32,6 +27,15 @@
        flatten
        shuffle
        rand-nth))
+
+(defn send-to-slack [text]
+  (client/post (or (env :write-hook) "https://hooks.slack.com/services/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")
+    {:form-params {:payload (json/write-str {:text text})}}))
+
+(defn startRaffle [list-of-users]
+  (let [entries (map (fn [user] (-> (assoc {} :name user)
+                  (assoc :tickets (+ (rand-int 40) 80)))) list-of-users)]
+    (do (send-to-slack (pr-str entries)) entries)))
 
 (defn splash []
   {:status 200
@@ -77,15 +81,15 @@
 (def history-endpoint
     (str "https://slack.com/api/channels.history?token=" (env :token) "&channel=CPP1NF1MY"))
 
-(def bot-threadid-request []
+(defn bot-threadid-request []
   (let [messages ((json/read-str (:body (client/post history-endpoint))) "messages")]
     ((some #(= (% "bot_id") "BQ1QR81PS")) "ts")))
 
 (def replies-endpoint
   (str "https://slack.com/api/channels.replies?token=" (env :token) "&channel=CPP1NF1MY"))
 
-(def thread-messages-request [threadid]
-  (client/post (str replies-end-point "&thread_ts=" threadid)))
+(defn thread-messages-request [threadid]
+  (client/post (str replies-endpoint "&thread_ts=" threadid)))
 
 (defroutes main-routes
   (GET "/" []
@@ -100,7 +104,9 @@
   (GET "/db" []
        (make-response (read-random-stuff)))
   (GET "/startraffle" req
-    (assoc (json-response) :body (get-in (json/read-str (:body (members-request)):key-fn keyword) [:channel :members])))
+    (assoc 
+      (json-response) 
+      :body (startRaffle (get-in (json/read-str (:body (members-request)):key-fn keyword) [:channel :members]))))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

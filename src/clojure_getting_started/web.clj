@@ -93,8 +93,7 @@
 
 (defroutes main-routes
   (GET "/" []
-       (send-to-slack "HELLOBOYS")
-       (splash))
+       (assoc (splash) :body "OK"))
   (GET "/ping" []
        (assoc (splash) :body "Ping ping vaan itelles"))
   (POST "/challenge" req

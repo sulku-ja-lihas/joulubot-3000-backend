@@ -55,7 +55,7 @@
    :body data})
 
 (def connection-url
-  (env :mombodb))
+  (env :monbodb))
 
 
 (defn select-raffle [thread-id]

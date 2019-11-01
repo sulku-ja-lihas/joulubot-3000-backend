@@ -24,7 +24,7 @@
   (GET "/ping" []
        (assoc (splash) :body "Ping ping vaan itelles"))
   (POST "/challenge" [req]
-    (assoc (splash) :body (get-in req [:body :challenge])))
+    (assoc (splash) :body (get-in req [:body "challenge"])))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

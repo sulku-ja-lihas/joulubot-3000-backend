@@ -48,7 +48,7 @@
    :body data})
 
 (def connection-url
-  (env :mombodb))
+  (env :monbodb))
 
 
 (defn persist-raffle! [thread-id raffle]

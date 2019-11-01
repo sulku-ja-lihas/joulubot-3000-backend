@@ -70,7 +70,6 @@
         (comment "joo tässä voi sitten tallentaa tietokantaan vaikka (write-to-db data) kunhan sen payloadin saa jotenkin kaivettua tosta perkeleen reqista. Ei kiinnosta ja fuck the world"))
   (GET "/db" []
        (make-response (read-random-stuff)))
-    (assoc (splash) :body (get-in (req :body) [:challenge])))
   (GET "/startraffle" req
     (assoc (json-response) :body (:body (members-request))))
   (ANY "*" []

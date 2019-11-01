@@ -112,7 +112,7 @@
                         pick-winner
                         winner-request)]
          (do
-           (send-to-slack winner)
+           (send-to-slack (:real_name winner))
            (assoc (splash) :body winner))))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))

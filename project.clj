@@ -5,11 +5,14 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [compojure "1.6.1"]
+                 [com.novemberain/monger "3.1.0"]
                  [ring/ring-jetty-adapter "1.7.1"]
                  [ring/ring-json "0.5.0"]
                  [environ "1.1.0"]
                  [clj-http "3.10.0"]
-                 [org.clojure/data.json "0.2.6"]]
+                 [org.clojure/data.json "0.2.6"]
+                 [ring/ring-json "0.5.0"]
+                 [environ "1.1.0"]]
   :min-lein-version "2.0.0"
   :plugins [[environ/environ.lein "0.3.1"]]
   :hooks [environ.leiningen.hooks]

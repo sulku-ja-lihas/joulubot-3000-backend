@@ -33,8 +33,7 @@
 
 (defn persist-raffle! [thread-id raffle]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
-    (mc/insert-and-return db "raffles" {:_id thread-id
-                                        :raffle raffle})))
+    (mc/update db "raffles" {:_id thread-id :raffle raffle} {:upsert true})))
 
 (defn send-to-slack [text]
   (client/post hook-url

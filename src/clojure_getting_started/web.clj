@@ -28,6 +28,11 @@
       shuffle
       rand-nth))
 
+(defn persist-raffle! [thread-id raffle]
+  (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
+    (mc/insert-and-return db "raffles" {:_id thread-id})))
+
+
 (defn send-to-slack [text]
   (client/post hook-url
                {:form-params {:payload (json/write-str {:text text})}}))
@@ -35,7 +40,9 @@
 (defn start-raffle [list-of-users]
   (let [entries (map (fn [user] (-> (assoc {} :name user)
                   (assoc :tickets (+ (rand-int 40) 80)))) list-of-users)]
-    (do (send-to-slack (pr-str entries)) entries)))
+    (do
+      (persist-raffle! "jou" entries)
+      (send-to-slack (pr-str entries)) entries)))
 
 (defn splash []
   {:status 200
@@ -50,10 +57,6 @@
 (def connection-url
   (env :mombodb))
 
-
-(defn persist-raffle! [thread-id raffle]
-  (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
-    (mc/insert-and-return db "raffles" {:_id thread-id})))
 
 (defn select-raffle [thread-id]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
@@ -97,8 +100,7 @@
        (let [members (get-in (json/read-str
                               (:body (members-request))
                               :key-fn keyword) [:channel :members])
-             raffle (start-raffle members)
-             _ (persist-raffle! "jou" raffle)]
+             raffle (start-raffle members)]
          (assoc (json-response) :body raffle)))
   (GET "/finishraffle" []
        (let [winner (-> (select-raffle "jou")

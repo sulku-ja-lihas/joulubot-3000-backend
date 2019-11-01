@@ -80,6 +80,7 @@
   (-> (client/post (str winner-endpoint userid))
       :body
       :body
+      :user
       :real_name))
 
 (def history-endpoint

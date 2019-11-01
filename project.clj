@@ -7,7 +7,8 @@
                  [compojure "1.6.1"]
                  [ring/ring-jetty-adapter "1.7.1"]
                  [environ "1.1.0"]
-                 [clj-http "3.10.0"]]
+                 [clj-http "3.10.0"]
+                 [org.clojure/data.json "0.2.6"]]
   :min-lein-version "2.0.0"
   :plugins [[environ/environ.lein "0.3.1"]]
   :hooks [environ.leiningen.hooks]

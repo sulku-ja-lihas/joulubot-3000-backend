@@ -28,9 +28,9 @@
        shuffle
        rand-nth))
 
-; (defn send-to-slack [text]
-;   (client/post (or (env :write-hook) "https://hooks.slack.com/services/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")
-;     {:form-params {:payload (json/write-str {:text text})}}))
+(defn send-to-slack [text]
+  (client/post (or (env :write-hook) "https://hooks.slack.com/services/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")
+               {:form-params {:payload (json/write-str {:text text})}}))
 
 (defn start-raffle [list-of-users]
   (let [entries (map (fn [user] (-> (assoc {} :name user)
@@ -93,8 +93,6 @@
        (assoc (splash) :body "Ping ping vaan itelles"))
   (POST "/challenge" req
         (assoc (splash) :body (get-in (req :body) [:challenge])))
-  (GET "/db" []
-       (make-response (read-random-stuff)))
   (GET "/startraffle" req
        (assoc 
         (json-response) 

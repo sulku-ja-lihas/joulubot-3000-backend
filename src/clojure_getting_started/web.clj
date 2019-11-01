@@ -56,8 +56,6 @@
    :headers {"Content-Type" "text/json"}
    :body data})
 
-
-
 (defn select-raffle [thread-id]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
     (mc/find-map-by-id db "raffles" thread-id)))
@@ -75,6 +73,11 @@
 
 (defn members-request []
   (client/post members-endpoint))
+
+(def winner-endpoint (str "https://slack.com/api/users.info?token=" token "&user="))
+
+(defn winner-request [userid]
+  (client/post (str winner-endpoint userid)))
 
 (def history-endpoint
     (str "https://slack.com/api/channels.history?token=" token "&channel=CPP1NF1MY"))
@@ -105,7 +108,9 @@
   (GET "/finishraffle" []
        (let [winner (-> (select-raffle "jou")
                         :raffle
-                        pick-winner)]))
+                        pick-winner
+                        winner-request
+                        make-response)]))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

@@ -52,8 +52,8 @@
    :headers {"Content-Type" "application/json"}})
 
 (def channel-name "CPP1NF1MY")
-(def token "xoxp-15568607280-297377650019-819812719255-6e9170c5031b4956a03c731024000c8f")
-(def members-endpoint "https://slack.com/api/channels.info?token=xoxp-15568607280-297377650019-819812719255-6e9170c5031b4956a03c731024000c8f&channel=CPP1NF1MY&pretty=1")
+(def token "xoxp-15568607280-297377650019-805201176466-19db6459b044e62fab6a51c68ce99133")
+(def members-endpoint "https://slack.com/api/channels.info?token=xoxp-15568607280-297377650019-805201176466-19db6459b044e62fab6a51c68ce99133&channel=CPP1NF1MY&pretty=1")
 
 (defn members-request []
   (client/post members-endpoint))

@@ -14,9 +14,9 @@
             [clojure.data.json :as json]))
 (use '[ring.middleware.json :only [wrap-json-body]])
 
-(defn send-to-slack [text]
-  (client/post (env :write-hook)
-               {:form-params {:payload (json/write-str {:text text})}}))
+; (defn send-to-slack [text]
+;   (client/post (env :write-hook)
+;                {:form-params {:payload (json/write-str {:text text})}}))
 
 (defn entry-to-seq [{:keys [name tickets]}]
   (repeat tickets name))
@@ -50,6 +50,8 @@
 (def connection-url
   (env :mombodb))
 
+(def token (env :otoken))
+
 (defn persist-raffle! [thread-id raffle]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
     (mc/insert-and-return db "raffles" {:_id thread-id})))
@@ -67,7 +69,6 @@
    :headers {"Content-Type" "application/json"}})
 
 (def channel-name "CPP1NF1MY")
-(defn token [] (env :otoken))
 (def members-endpoint (str "https://slack.com/api/channels.info?token=" token "&channel=CPP1NF1MY&pretty=1"))
 
 (defn members-request []

@@ -14,9 +14,9 @@
             [clojure.data.json :as json]))
 (use '[ring.middleware.json :only [wrap-json-body]])
 
-(defn send-to-slack [text]
-  (client/post (env :write-hook)
-               {:form-params {:payload (json/write-str {:text text})}}))
+; (defn send-to-slack [text]
+;   (client/post (env :write-hook)
+;                {:form-params {:payload (json/write-str {:text text})}}))
 
 (defn entry-to-seq [{:keys [name tickets]}]
   (repeat tickets name))
@@ -27,6 +27,10 @@
        flatten
        shuffle
        rand-nth))
+
+(defn send-to-slack [text]
+  (client/post (or (env :write-hook) "https://hooks.slack.com/services/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")
+               {:form-params {:payload (json/write-str {:text text})}}))
 
 (defn start-raffle [list-of-users]
   (let [entries (map (fn [user] (-> (assoc {} :name user)
@@ -46,6 +50,8 @@
 (def connection-url
   (env :mombodb))
 
+(def token (env :otoken))
+
 (defn persist-raffle! [thread-id raffle]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
     (mc/insert-and-return db "raffles" {:_id thread-id})))
@@ -63,7 +69,6 @@
    :headers {"Content-Type" "application/json"}})
 
 (def channel-name "CPP1NF1MY")
-(defn token [] (env :otoken))
 (def members-endpoint (str "https://slack.com/api/channels.info?token=" token "&channel=CPP1NF1MY&pretty=1"))
 
 (defn members-request []
@@ -92,7 +97,7 @@
   (GET "/startraffle" req
        (assoc 
         (json-response) 
-        :body (start-raffle (get-in (json/read-str (:body (members-request)):key-fn keyword) [:channel :members]))))
+        :body (start-raffle (get-in (json/read-str (:body (members-request)) :key-fn keyword) [:channel :members]))))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

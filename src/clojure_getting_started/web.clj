@@ -78,9 +78,7 @@
 
 (defn winner-request [userid]
   (-> (client/post (str winner-endpoint userid))
-      :body
-      :body
-      :user))
+      :body))
 
 (def history-endpoint
     (str "https://slack.com/api/channels.history?token=" token "&channel=CPP1NF1MY"))
@@ -112,9 +110,10 @@
        (let [winner (-> (select-raffle "jou")
                         :raffle
                         pick-winner
-                        winner-request
-                        make-response)]
-         (assoc (splash) :body winner)))
+                        winner-request)]
+         (do
+           (send-to-slack winner)
+           (assoc (splash) :body winner))))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

@@ -18,6 +18,9 @@
 
 (def token (env :otoken))
 
+(def connection-url
+  (env :monbodb))
+
 (defn entry-to-seq [{:keys [name tickets]}]
 (repeat tickets name))
 
@@ -30,8 +33,8 @@
 
 (defn persist-raffle! [thread-id raffle]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
-    (mc/insert-and-return db "raffles" {:_id thread-id})))
-
+    (mc/insert-and-return db "raffles" {:_id thread-id
+                                        :raffle raffle})))
 
 (defn send-to-slack [text]
   (client/post hook-url
@@ -54,8 +57,6 @@
    :headers {"Content-Type" "text/json"}
    :body data})
 
-(def connection-url
-  (env :monbodb))
 
 
 (defn select-raffle [thread-id]

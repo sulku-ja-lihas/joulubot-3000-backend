@@ -39,7 +39,7 @@
 
 (defn persist-raffle! [thread-id raffle]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
-    (mc/insert-and-return db "raffles" {:_id thread-id
+    (mc/insert-and-return db "raffles" {:_id thread-id})))
 
 (defn write-to-db [msg]
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]

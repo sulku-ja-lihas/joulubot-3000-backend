@@ -29,7 +29,7 @@
        rand-nth))
 
 (defn send-to-slack [text]
-  (client/post (or (env :write-hook) "https://hooks.slack.com/services/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")
+  (client/post (or (env :write-hook) "https://hooks.slack.com/services/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")
                {:form-params {:payload (json/write-str {:text text})}}))
 
 (defn start-raffle [list-of-users]

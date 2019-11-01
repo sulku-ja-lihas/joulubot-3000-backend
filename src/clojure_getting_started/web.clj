@@ -32,7 +32,7 @@
   (client/post (or (env :write-hook) "https://hooks.slack.com/services/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")
     {:form-params {:payload (json/write-str {:text text})}}))
 
-(defn startRaffle [list-of-users]
+(defn start-raffle [list-of-users]
   (let [entries (map (fn [user] (-> (assoc {} :name user)
                   (assoc :tickets (+ (rand-int 40) 80)))) list-of-users)]
     (do (send-to-slack (pr-str entries)) entries)))
@@ -106,7 +106,7 @@
   (GET "/startraffle" req
     (assoc 
       (json-response) 
-      :body (startRaffle (get-in (json/read-str (:body (members-request)):key-fn keyword) [:channel :members]))))
+      :body (start-raffle (get-in (json/read-str (:body (members-request)):key-fn keyword) [:channel :members]))))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

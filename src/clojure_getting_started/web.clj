@@ -18,10 +18,20 @@
   (map (fn [user] (-> (assoc {} :name user)
                       (assoc :tickets (+ (rand-int 40) 80)))) list-of-users))
 
+
 (defn send-to-slack [text]
   (client/post (env :write-hook)
-    {:form-params {:payload (json/write-str {:text text})}}))
+               {:form-params {:payload (json/write-str {:text text})}}))
 
+(defn entry-to-seq [{:keys [name tickets]}]
+  (repeat tickets name))
+
+(defn pick-winner [raffle]
+  (->> raffle
+       (map entry-to-seq)
+       flatten
+       shuffle
+       rand-nth))
 
 (defn splash []
   {:status 200

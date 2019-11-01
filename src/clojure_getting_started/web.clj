@@ -62,11 +62,6 @@
   (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
     (mc/insert-and-return db "test" {:msg msg})))
 
-(defn read-random-stuff []
-  (let [{:keys [conn db]} (mg/connect-via-uri connection-url)]
-    (mc/find-maps db "test" {})))
-
-(def tila (atom {}))
 (defn json-response []
   {:status 200
    :headers {"Content-Type" "application/json"}})
@@ -98,14 +93,12 @@
        (assoc (splash) :body "Ping ping vaan itelles"))
   (POST "/challenge" req
         (assoc (splash) :body (get-in (req :body) [:challenge])))
-  (POST "/save" req
-        (comment "joo tässä voi sitten tallentaa tietokantaan vaikka (write-to-db data) kunhan sen payloadin saa jotenkin kaivettua tosta perkeleen reqista. Ei kiinnosta ja fuck the world"))
   (GET "/db" []
        (make-response (read-random-stuff)))
   (GET "/startraffle" req
-    (assoc 
-      (json-response) 
-      :body (start-raffle (get-in (json/read-str (:body (members-request)):key-fn keyword) [:channel :members]))))
+       (assoc 
+        (json-response) 
+        :body (start-raffle (get-in (json/read-str (:body (members-request)):key-fn keyword) [:channel :members]))))
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 

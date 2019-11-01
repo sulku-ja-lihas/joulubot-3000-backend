@@ -10,6 +10,12 @@
             [clojure.data.json :as json]))
 (use '[ring.middleware.json :only [wrap-json-body]])
 
+(defn startRaffle []
+  (let [list-of-users ["Atte" "Jonne" "Toni" "Otto" "Tuomo"]
+        users-with-tickets (map (fn [user] (-> (assoc {} :name user)
+                                               (assoc :tickets (+ (rand-int 40) 80)))) list-of-users)]
+    users-with-tickets))
+
 (defn send-to-slack [text]
   (client/post (env :write-hook)
     {:form-params {:payload (json/write-str {:text text})}}))

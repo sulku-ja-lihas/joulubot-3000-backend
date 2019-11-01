@@ -4,7 +4,13 @@
             [compojure.route :as route]
             [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
-            [environ.core :refer [env]]))
+            [environ.core :refer [env]]
+            [clj-http.client :as client]
+            [clojure.data.json :as json]))
+
+(defn send-to-slack [text]
+  (client/post (env :write-hook)
+    {:form-params {:payload (json/write-str {:text text})}}))
 
 (defn splash []
   {:status 200
@@ -13,6 +19,7 @@
 
 (defroutes app
   (GET "/" []
+       (send-to-slack "HELLOBOYS")
        (splash))
   (GET "/ping" []
        (assoc (splash) :body "Ping ping vaan itelles"))
